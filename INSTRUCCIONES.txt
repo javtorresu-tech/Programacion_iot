@@ -1,0 +1,59 @@
+INSTRUCCIONES DE EJECUCION - PROYECTO IOT CLIMAFELIZ (AWS API)
+==============================================================
+
+Archivos incluidos:
+1. climafeliz_iot.py         -> Script principal para DEVASC / Visual Studio Code (envio a AWS por API).
+2. mediciones_climafeliz.txt -> Archivo de mediciones de prueba generado por el script.
+3. packett.pkt               -> Simulacion en Cisco Packet Tracer.
+4. packet_mcu.py             -> Respaldo del codigo Python cargado en el MCU de Packet Tracer.
+
+Requisitos y dependencias:
+- Python 3.8 o superior. Solo usa librerias estandar (json, os, time, urllib, datetime).
+  No requiere instalar librerias externas con pip.
+- Cisco Packet Tracer para abrir packett.pkt.
+- Endpoint HTTP POST en AWS API Gateway (por ejemplo conectado a Lambda / DynamoDB).
+
+Seguridad:
+- El codigo NO incluye URLs privadas, claves API ni credenciales de AWS.
+  Todo se configura mediante variables de entorno al momento de ejecutar.
+
+Como ejecutar climafeliz_iot.py en DEVASC / Linux / macOS:
+1. Modo simulacion local (sin conectar a AWS):
+   python3 climafeliz_iot.py
+
+2. Modo envio real a AWS (API sin API Key):
+   export AWS_API_URL="https://TU-ENDPOINT.execute-api.REGION.amazonaws.com/STAGE/RUTA"
+   python3 climafeliz_iot.py
+
+3. Modo envio real a AWS (si tu API Gateway exige header x-api-key):
+   export AWS_API_URL="https://TU-ENDPOINT.execute-api.REGION.amazonaws.com/STAGE/RUTA"
+   export AWS_API_KEY="TU_CLAVE_API_AWS"
+   python3 climafeliz_iot.py
+
+Como ejecutar en Windows (PowerShell):
+   $env:AWS_API_URL="https://TU-ENDPOINT.execute-api.REGION.amazonaws.com/STAGE/RUTA"
+   $env:AWS_API_KEY="TU_CLAVE_API_AWS"   # opcional si tu API no usa clave
+   python climafeliz_iot.py
+
+Formato JSON enviado en cada POST a AWS:
+{
+  "empresa": "ClimaFeliz SpA",
+  "fecha": "2026-11-25 08:00",
+  "cliente": "CLI-01",
+  "region": "IV Región",
+  "cultivo": "Viña",
+  "humedad": 28.0,
+  "estanque": 65.0,
+  "riego": 1,
+  "llenado": 0,
+  "deficit": 17.0,
+  "alerta": "RIEGO_ON"
+}
+
+Como ejecutar la simulacion en Packet Tracer:
+1. Abrir packett.pkt en Cisco Packet Tracer.
+2. Abrir el MCU, ir a la pestana Programming y presionar Run.
+3. Verificar en la consola del MCU la activacion/desactivacion de los aspersores:
+   - Vinas: enciende < 35%, apaga >= 45%
+   - Paltas: enciende < 40%, apaga >= 50%
+   - Tomates: enciende < 45%, apaga >= 55%
